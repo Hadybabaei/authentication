@@ -22,4 +22,14 @@ var login = joi_1.default.object({
 var verificationEmail = joi_1.default.object({
     verification_code: joi_1.default.string().required(),
 });
-exports.default = { login: login, registerWithEmail: registerWithEmail, verificationEmail: verificationEmail, registerWithPhone: registerWithPhone };
+var editUser = joi_1.default.object({
+    email: joi_1.default.string().required(),
+    phone_number: joi_1.default.string(),
+    password: joi_1.default.string(),
+    first_name: joi_1.default.string(),
+    last_name: joi_1.default.string(),
+    middle_name: joi_1.default.string(),
+    country: joi_1.default.string(),
+    country_tag: joi_1.default.string(),
+});
+exports.default = { login: login, registerWithEmail: registerWithEmail, verificationEmail: verificationEmail, registerWithPhone: registerWithPhone, editUser: editUser };

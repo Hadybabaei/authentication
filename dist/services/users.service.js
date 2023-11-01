@@ -55,7 +55,7 @@ var UsersService = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 4, , 5]);
-                        return [4 /*yield*/, this._userModel.findUnique({
+                        return [4 /*yield*/, this._userModel.findFirst({
                                 where: { email: data.email },
                             })];
                     case 1:
@@ -166,6 +166,7 @@ var UsersService = /** @class */ (function () {
                         return [2 /*return*/, user];
                     case 2:
                         err_1 = _a.sent();
+                        console.log(err_1);
                         throw new Error("Internal Server Error");
                     case 3: return [2 /*return*/];
                 }
@@ -264,17 +265,60 @@ var UsersService = /** @class */ (function () {
             });
         }); };
         this.googleAuthRegister = function (data) { return __awaiter(_this, void 0, void 0, function () {
-            var token;
+            var user, token, newUser, error_4;
             return __generator(this, function (_a) {
-                try {
-                    token = (0, token_1.createToken)(data);
-                    return [2 /*return*/, token];
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, this._userModel.findFirst({ where: { email: data.email } })];
+                    case 1:
+                        user = _a.sent();
+                        token = void 0;
+                        if (!user) return [3 /*break*/, 2];
+                        token = (0, token_1.createToken)(user);
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, this._userModel.create({
+                            data: data
+                        })];
+                    case 3:
+                        newUser = _a.sent();
+                        token = (0, token_1.createToken)(newUser);
+                        _a.label = 4;
+                    case 4: return [2 /*return*/, token];
+                    case 5:
+                        error_4 = _a.sent();
+                        console.log(error_4);
+                        throw error_4; // Re-throw the caught HttpExceptions instance
+                    case 6: return [2 /*return*/];
                 }
-                catch (error) {
-                    console.log(error);
-                    throw error; // Re-throw the caught HttpExceptions instance
+            });
+        }); };
+        this.editUserInfo = function (data) { return __awaiter(_this, void 0, void 0, function () {
+            var user, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, this._userModel.findUnique({ where: { email: data.email } })];
+                    case 1:
+                        user = _a.sent();
+                        if (!user) return [3 /*break*/, 3];
+                        return [4 /*yield*/, this._userModel.update({ where: { email: data.email }, data: {
+                                    first_name: data.first_name,
+                                    last_name: data.last_name,
+                                    phone_number: data.phone_number,
+                                    middle_name: data.middle_name,
+                                    country: data.country,
+                                    country_tag: data.country_tag
+                                } })];
+                    case 2: return [2 /*return*/, _a.sent()];
+                    case 3: throw new http_exceptions_1.default(404, "User Not Found");
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
+                        err_5 = _a.sent();
+                        throw err_5;
+                    case 6: return [2 /*return*/];
                 }
-                return [2 /*return*/];
             });
         }); };
     }

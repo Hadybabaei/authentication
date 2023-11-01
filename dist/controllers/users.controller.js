@@ -231,22 +231,41 @@ var UsersController = /** @class */ (function () {
                 }
             });
         }); };
+        this.editUserInfo = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var editedUser, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this._userService.editUserInfo(req.body)];
+                    case 1:
+                        editedUser = _a.sent();
+                        res.status(200).json({ Message: "User Edited Successfuly", Succes: true });
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_5 = _a.sent();
+                        next(err_5);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
         this.initializeRouter();
     }
     UsersController.prototype.initializeRouter = function () {
-        this.router.get("/redirect", passport_1.default.authenticate('google', { failureRedirect: "/", successRedirect: "/api/test" }));
-        this.router.get("/register/google", passport_1.default.authenticate('google', { scope: ["profile", "email"] }));
-        // this.router.get("/test",(req:Request,res:Response,next:NextFunction )=>{
-        //   console.log(req.user)
-        //   next()
-        // }) 
+        this.router.get("/redirect", passport_1.default.authenticate("google", {
+            failureRedirect: "/",
+            successRedirect: "/api/test",
+        }));
+        this.router.get("/register/google", passport_1.default.authenticate("google", { scope: ["profile", "email"] }));
         this.router.post("/register/email", (0, validation_middleware_1.default)(users_dto_1.default.registerWithEmail), this.registerByEmail);
         this.router.post("/register/phone", (0, validation_middleware_1.default)(users_dto_1.default.registerWithPhone), this.registerByPhoneNumber);
         this.router.post("/verification", (0, validation_middleware_1.default)(users_dto_1.default.verificationEmail), authentication_middleware_1.default, this.emailVerification);
         this.router.get("/verification/resend", authentication_middleware_1.default, this.resendVerification);
-        this.router.get("/users", this.getAllUsers);
+        this.router.get("/users", authentication_middleware_1.default, this.getAllUsers);
         this.router.post("/login", (0, validation_middleware_1.default)(users_dto_1.default.login), this.login);
         this.router.get("/test", this.googleAuth);
+        this.router.put("/users/edit", authentication_middleware_1.default, (0, validation_middleware_1.default)(users_dto_1.default.editUser), this.editUserInfo);
     };
     return UsersController;
 }());

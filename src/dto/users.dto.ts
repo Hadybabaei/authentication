@@ -20,4 +20,16 @@ const login = Joi.object({
 const verificationEmail  = Joi.object({
     verification_code:Joi.string().required(),
 })
-export default { login, registerWithEmail,verificationEmail,registerWithPhone }; 
+
+const editUser = Joi.object({
+    email:Joi.string().required(),
+    phone_number:Joi.string(),
+    password:Joi.string(),
+    first_name:Joi.string(),
+    last_name:Joi.string(),
+    middle_name:Joi.string(),
+    country:Joi.string(),
+    country_tag:Joi.string(),
+
+})
+export default { login, registerWithEmail,verificationEmail,registerWithPhone ,editUser}; 

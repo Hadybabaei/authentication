@@ -8,7 +8,7 @@ const userService = new UsersService();
 const GoogleStrategy = passportGoogle.Strategy;
 
 passport.serializeUser((user, done) => {
-    done(null, user);
+  done(null, user);
   });
   
   passport.deserializeUser((user: any, done) => {

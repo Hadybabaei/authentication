@@ -35,12 +35,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var http_exceptions_1 = __importDefault(require("../utils/exceptions/http.exceptions"));
+var token_1 = __importDefault(require("../utils/token"));
 require("../utils/passport.conf");
 function isLogged(req, res, next) {
     return __awaiter(this, void 0, void 0, function () {
+        var bearer, splitedToken;
         return __generator(this, function (_a) {
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    bearer = req.headers.authorization;
+                    if (!bearer || !bearer.startsWith("Bearer ")) {
+                        return [2 /*return*/, next(new http_exceptions_1.default(401, "Unauthorized"))];
+                    }
+                    splitedToken = bearer.split(" ")[1];
+                    return [4 /*yield*/, token_1.default
+                            .verifyToken(splitedToken)
+                            .then(function (user) {
+                            if (user) {
+                                console.log(user);
+                                next();
+                            }
+                            else {
+                                return next(new http_exceptions_1.default(401, "Unauthorized"));
+                            }
+                        })
+                            .catch(function (err) {
+                            next(err);
+                        })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }

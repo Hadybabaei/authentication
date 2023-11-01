@@ -13,7 +13,7 @@ class UsersService {
 
   public registerByEmail = async (data: UsersInterface) => {
     try {
-      const users = await this._userModel.findUnique({
+      const users = await this._userModel.findFirst({
         where: { email: data.email! },
       });
       if (users) {
@@ -22,7 +22,7 @@ class UsersService {
 
       const createdUser = await this._userModel.create({ data });
       const mailOptions: MailSender = {
-        to: createdUser.email!,
+        to: createdUser.email as string,
         subject: "Your Verification Code",
         text: `Your TripTick Verification Code Is : ${data.verification_code}`,
       };
@@ -96,6 +96,7 @@ class UsersService {
       const user = await this._userModel.findUnique({ where: { email:email! } });
       return user;
     } catch (err: any) {
+      console.log(err)
       throw new Error("Internal Server Error");
     }
   };
@@ -175,7 +176,17 @@ class UsersService {
 
   public googleAuthRegister = async(data:any)=>{
     try {
-      const token = createToken(data);
+      // console.log(data)
+      const user = await this._userModel.findFirst({where:{email:data.email}});
+      let token;
+      if (user){
+        token = createToken(user);
+      }else{
+        const newUser = await this._userModel.create({
+          data
+        });
+        token = createToken (newUser)
+      }
       return token;
     } catch (error: unknown) {
       console.log(error)
@@ -183,6 +194,25 @@ class UsersService {
     }
   }
   
+  public editUserInfo = async(data:UsersInterface)=>{
+    try{
+      const user = await this._userModel.findUnique({where:{email:data.email!}})
+      if (user){
+        return await this._userModel.update({where:{email:data.email as string},data:{
+          first_name:data.first_name,
+          last_name:data.last_name,
+          phone_number:data.phone_number,
+          middle_name:data.middle_name,
+          country:data.country,
+          country_tag:data.country_tag
+        }})
+      }else{
+        throw new HttpExceptions(404, "User Not Found");
+      }
+    }catch(err:any){
+      throw err
+    }
+  }
 }
 
 export default UsersService;

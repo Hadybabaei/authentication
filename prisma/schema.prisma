@@ -19,6 +19,7 @@ model Users {
   role                     String     @default("user")
   verification_code        String?
   verified_status          Boolean?   @default(false)
+  phone_verified_status    Boolean?   @default(false)
   verification_expire_time DateTime?
   country                  String?
   country_tag              String?
@@ -26,27 +27,5 @@ model Users {
   last_login               DateTime? // Assuming this is a timestamp of the last login
   createdAt                DateTime   @default(now()) // This adds a createdAt timestamp
   updatedAt                DateTime   @updatedAt // This adds an updatedAt timestamp
-  chatRooms                ChatRoom[]
-  messages                 Message[]
 }
 
-model ChatRoom {
-  id           Int       @id @default(autoincrement())
-  name         String
-  participants Users[] // Define the relationship to Users
-  messages     Message[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-}
-
-model Message {
-  message_id Int      @id @default(autoincrement())
-  content    String
-  timestamp  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  roomId     Int
-  senderId   Int
-  sender     Users    @relation(fields: [senderId], references: [id]) // Correct the field name
-  room       ChatRoom @relation(fields: [roomId], references: [id]) // Correct the field name
-}
